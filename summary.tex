@@ -10,7 +10,7 @@
 
 \title{Optimizing CMS build infrastructure via Apache Mesos}
 
-\author{David Abduracmanov$^1$, Alessandro Degano$^2$, Peter Elmer$^3$, Giulio
+\author{David Abdurachmanov$^1$, Alessandro Degano$^2$, Peter Elmer$^3$, Giulio
 Eulisse$^1$, David Mendez$^4$, Shahzad Muzaffar$^1$ on behalf of the CMS collaboration.}
 
 \address{$^1$ Fermilab, Batavia, IL 60510, USA}
@@ -36,7 +36,7 @@ sharing across distributed applications, or frameworks. It can run Hadoop,
 Jenkins, Spark, Aurora, and other applications on a dynamically shared pool of
 nodes.
 
-We present how we migrated our continuos integration system to schedule jobs on
+We present how we migrated our continuous integration system to schedule jobs on
 a relatively small Apache Mesos enabled cluster and how this resulted in better
 resource usage, higher peak performance and lower latency thanks to the dynamic
 scheduling capabilities of Mesos.
@@ -56,7 +56,7 @@ integration builds for production and experimental branches alike.
 
 \item Unit testing and reduced release validation for integration builds.
 
-\item Automated Testing and Continuos Integration of updates as provided by
+\item Automated Testing and Continuous Integration of updates as provided by
 various collaborators under the form of Github Pull Requests.
 
 \item Running additional web based QA and documentation tools.
@@ -70,14 +70,14 @@ including production releases, development ones and experimental branches. In
 the last month ( April 7, 2015 – May 7, 2015) we had over 294 active pull
 requests tested (eventually multiple times) and integrated in our release
 branches and integration a total of over 8,000 pull requests have been processed
-by our Continuos Integration machinery since we started using Github in the
+by our Continuous Integration machinery since we started using Github in the
 middle of 2013.~\cite{Eulisse2014}
 
 To manage handling the automated QA and release workflows, the CMS build
 infrastructure currently consists of a cluster of 284 virtual cores and 540 GB
 of memory provisioned in the CERN OpenStack based cloud.~\cite{CERNOPENSTACK}
 
-The QA procedures, the Continous Integration is performed in an automatic manner
+The QA procedures, the Continuous Integration is performed in an automatic manner
 via Jenkins~\cite{JENKINS}, an OpenSource continuous integration system.
 
 Moreover the group is responsible for maintaining a number of web services,
@@ -146,7 +146,7 @@ modern Linux feature, known as \textit{containers}, to isolate the payload task
 being executed by the slaves. Containers are middle ground entities between
 processes and virtual machines. Like processes, they run all on top of the same
 linux kernel, however they are completely isolated one from the other, having
-each their own separate resources and runtime. In particular one of the the most
+each their own separate resources and runtime. In particular one of the most
 popular engines supported by Mesos is Docker~\cite{DOCKER}, which is quickly
 gaining industry acceptance and whose usage CMS itself is
 exploring~\cite{DOCKERPAPER}.
@@ -257,7 +257,7 @@ and memory usage. Together with the fact that Jenkins allows programmatic
 definition of labels attached to a job, this allows fine grained scheduling
 where, for example, more recent releases are assigned to a queue with a larger
 share of the CPU budget. Moreover the ability to assign a Docker container to a
-queue alllows reducing the issues deriving from build machines being deployed at
+queue allows reducing the issues deriving from build machines being deployed at
 different times and therefore potentially having slightly different setups.
 
 \subsection{Deploying services with Marathon and Docker}
