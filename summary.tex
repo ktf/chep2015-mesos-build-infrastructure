@@ -47,7 +47,7 @@ scheduling capabilities of Mesos.
 \section{Current build infrastructure}
 
 CMS Core Software group is responsible for the whole release engineering process
-for the CMS Offline Software, CMSSW. In particular this includes:
+for the CMS Offline Software, CMSSW\@. In particular this includes:
 
 \begin{itemize}
 
@@ -67,18 +67,19 @@ various collaborators under the form of Github Pull Requests.
 
 CMS builds up to 21 releases per day on Scientific Linux 6 (SLC6) alone,
 including production releases, development ones and experimental branches. In
-the last month ( April 7, 2015 – May 7, 2015) we had over 294 active pull
+the last month (April 7, 2015 – May 7, 2015) we had over 294 active pull
 requests tested (eventually multiple times) and integrated in our release
-branches and integration a total of over 8,000 pull requests have been processed
+branches and integration. A total of over 8,000 pull requests have been 
+processed
 by our Continuous Integration machinery since we started using Github in the
 middle of 2013.~\cite{Eulisse2014}
 
-To manage handling the automated QA and release workflows, the CMS build
+To handle the automated QA and release workflows, the CMS build
 infrastructure currently consists of a cluster of 284 virtual cores and 540 GB
 of memory provisioned in the CERN OpenStack based cloud.~\cite{CERNOPENSTACK}
 
-The QA procedures, the Continuous Integration is performed in an automatic manner
-via Jenkins~\cite{JENKINS}, an OpenSource continuous integration system.
+The QA procedures, the Continuous Integration are performed in an automatic 
+manner via Jenkins~\cite{JENKINS}, an OpenSource continuous integration system.
 
 Moreover the group is responsible for maintaining a number of web services,
 mostly serving build artifacts like installation RPMs, log files and ROOT files
@@ -100,7 +101,7 @@ needed to be delivered with the same latency of SLC6 ones so we do not have much
 margin in overcommitting the SLC5 infrastructure.
 
 While the static partitioning of the cluster has been sufficient for a long
-period, we wish to improve both the latency for  critical builds (i.e.
+period, we wish to improve both the latency for  critical builds (i.e.\ 
 development builds or tests on pull requests for  development builds) and
 improve the overall cluster utilization, with the aim  of reducing the number of
 resources needed.
@@ -116,9 +117,9 @@ Big names in the industry (e.g. Google~\cite{BORG}) have long solved the problem
 with proprietary solutions which provide more dynamic cluster scheduling,
 however recently a number of open-source projects have emerged trying to provide
 the same kind of functionality. In particular we decided to evaluate a resource
-manager called Apache Mesos~\cite{MESOS}(just Mesos from now on).
+manager called Apache Mesos~\cite{MESOS} (just Mesos from now on).
 
-Mesos originated from research work done at UC Berkeley~\cite{MESOSPAPER} which
+Mesos originated from the research done at UC Berkeley~\cite{MESOSPAPER} which
 has then been brought to production by Twitter. As the project evolved it got
 incubated as part of the Apache Foundation Incubator, successfully graduating
 from it in 2013~\cite{GRADUATION}, and it's therefore now distributed as
@@ -137,27 +138,28 @@ how many tasks it would like to create for the given resource offer. This allows
 for more fine tuned scheduling of resources and for application aware scheduling
 and has been demonstrated in very large scale (thousands of nodes) setups.
 
-On the backend, Mesos masters uses Apache ZooKeeper (just ZooKeeper from now on)
-~\cite{ZOOKEEPER} to provide a fault tolerant, distributed, setup when multiple
-masters are used.
+On the back-end, Mesos masters uses Apache ZooKeeper (just ZooKeeper from
+now on)~\cite{ZOOKEEPER} to provide a fault tolerant, distributed,
+setup when multiple masters are used.
 
 Moreover, recent improvements allow Mesos to take advantage of a relatively
 modern Linux feature, known as \textit{containers}, to isolate the payload task
 being executed by the slaves. Containers are middle ground entities between
 processes and virtual machines. Like processes, they run all on top of the same
-linux kernel, however they are completely isolated one from the other, having
+Linux kernel, however they are completely isolated one from the other, having
 each their own separate resources and runtime. In particular one of the most
 popular engines supported by Mesos is Docker~\cite{DOCKER}, which is quickly
 gaining industry acceptance and whose usage CMS itself is
 exploring~\cite{DOCKERPAPER}.
 
-A number of Mesos frameworks are available and open-sourced, in particular a
-simple PaaS called Marathon~\cite{MARATHON}, a plugin which allows two spawn
-build nodes on demand for the Jenkins continuous integration system
-~\cite{MESOSJENKINS} and a number of frameworks to dynamically provision
-resources for Big Data stacks like Apache Hadoop~\cite{MESOSHADOOP}, Apache
-Spark~\cite{MESOSSPARK} or databases like Apache Cassandra~\cite{MESOSCASSANDRA}
-or Elasticsearch~\cite{MESOSELASTIC}.
+A number of Mesos frameworks are available and open-sourced, in
+particular a simple PaaS called Marathon~\cite{MARATHON}, which
+allows two spawn build nodes on demand for the Jenkins continuous
+integration system~\cite{MESOSJENKINS} and a number of frameworks
+to dynamically provision resources for Big Data stacks like
+Apache Hadoop~\cite{MESOSHADOOP}, Apache Spark~\cite{MESOSSPARK}
+or databases like Apache Cassandra~\cite{MESOSCASSANDRA} or
+Elasticsearch~\cite{MESOSELASTIC}.
 
 \section{New cluster architecture}
 
@@ -194,17 +196,17 @@ the provided set of rules and constraint. It acts as a cluster level
 \textit{init} or \textit{upstart} daemon.  By using either Marathon GUI or its
 REST interface an administrator can request to start a process or a Docker
 container, eventually in multiple copies, and Marathon will take care of
-starting and monitoring such a process(es), ensuring it's restarted in case it
+starting and monitoring such a process, ensuring it's restarted in case it
 dies. Moreover it exposes the location of the various services via a REST based
 API so that the front-end proxies can use it for service discovery and redirect
 traffic to it. A custom made wrapper script is used to generate the front-end
 configuration.
 
-\item \textbf{HAProxy}: HAProxy is a fast and easy solution for load balancing
-proxy which we use as a front-end to redirect to our services. A cronjob running
-every few minutes is responsible for reading the backend information and update
-the configuration so that various requests are redirected to the correct host in
-the slave cluster.
+\item \textbf{HAProxy}: HAProxy is a fast and easy solution for load
+balancing proxy which we use as a front-end to redirect to our services.
+A cronjob running every few minutes is responsible for reading the
+back-end information and update the configuration so that various
+requests are redirected to the correct host in the slave cluster.
 
 \item \textbf{nginx}: since HAProxy does not support SSL termination, in case we
 need it, we use the nginx web service for this purpose, however, even when this
@@ -224,69 +226,76 @@ application running on it. This means for example that we can run SLC5 Jenkins
 builders inside a Docker container which runs on top of a SLC6 machine,
 eliminating the special need for a SLC5 build cluster.
 
-In line of principle each node is equal to the other and this is generally true
-for the case in which the application does not need to store a large state for a
-long period of time. This is in particularly true for Jenkins builders, which
-are expendables. For applications which do have a long standing state, e.g. an
-Elasticsearch cluster or a web server, we make sure that the machine(s) which
-hosts the data has a special attribute set, so that Mesos can easily schedule
-the service to the correct backend. An alternative which will soon be possible
-is to use Mesos dynamic resources extension which will allow to specify not only
-job needs in terms of CPU or memory, but also persistent disk storage.
+In line of principle each node is equal to the other and this is
+generally true for the case in which the application does not need to
+store a large state for a long period of time. This is in particularly
+true for Jenkins builders, which are expendables. For applications which
+do have a long standing state, e.g.\ an Elasticsearch cluster or a web
+server, we make sure that the machine which hosts the data has a
+special attribute set, so that Mesos can easily schedule the service
+to the correct back-end. An alternative which will soon be possible is
+to use Mesos dynamic resources extension which will allow to specify
+not only job needs in terms of CPU or memory, but also persistent disk
+storage.
 
-For security reasons, each node cannot talk directly to each other, but has to
-go through the front-end interface.
+For security reasons, each node cannot talk directly to each other, but
+it has to go through the front-end interface.
 
 In its current incarnation our Mesos cluster setup uses the OpenStack based CERN
 Cloud for provisioning machines however we have plans to experiment with real
 hardware, at least for the stateless builders, since bare metal seem to provide
 better performance than standard build machines due to the fact building a large
-project like CMSSW is an I/O intensive tasks due to a large number of files
+project like CMSSW is an I/O intensive tasks due to the large number of files
 being compiled and linked.
 
 \section{Notable Mesos frameworks and their utilizations}
 
-\subsection{Provisioning slaves with Jenkins Mesos plugin}
+\subsection{Provisioning slaves with Jenkins Mesos plug-in}
 
-Given the fact that CMS Build Infrastructure heavily relies on Jenkins to drive
-the release integration and QA process, one of the main advantages of Mesos is
-the availability of a Jenkins plugin which allows provisioning new slaves as a
-required. In particular the plugin allows to define multiple queues, each with a
-separate label associated and each with different requirements in terms of CPU
-and memory usage. Together with the fact that Jenkins allows programmatic
-definition of labels attached to a job, this allows fine grained scheduling
-where, for example, more recent releases are assigned to a queue with a larger
-share of the CPU budget. Moreover the ability to assign a Docker container to a
-queue allows reducing the issues deriving from build machines being deployed at
-different times and therefore potentially having slightly different setups.
+Given the fact that CMS Build Infrastructure heavily relies on Jenkins
+to drive the release integration and QA process, one of the main
+advantages of Mesos is the availability of a Jenkins plug-in which allows
+provisioning new slaves as a required. In particular the plug-in allows
+to define multiple queues, each with a separate label associated and
+each with different requirements in terms of CPU and memory usage.
+Together with the fact that Jenkins allows programmatic definition of
+labels attached to a job, this allows fine grained scheduling where,
+for example, more recent releases are assigned to a queue with a larger
+share of the CPU budget. Moreover the ability to assign a Docker
+container to a queue allows reducing the issues deriving from build
+machines being deployed at different times and therefore potentially
+having slightly different setups.
 
 \subsection{Deploying services with Marathon and Docker}
 
-Mesos would not be to much different from a normal batch-system, however, if it
-did not provide the ability to execute long running services, either running
-natively inside a Docker container. In particular the Mesos framework Marathon
-provides a simple setup where services can be defined via a JSON formatted file,
-passed to the service via its REST API. The JSON file contains information like
-which executable to launch or alternatively which Docker container to spawn.
-Additional configuration options allow to define port and volume mappings for
-the application, and to specify how many copies are requested. Moreover Marathon
-allows the service manager to specify placement constraints so that, for
-example, a given instance of a web server is started on a machine where the data
-is actually located or it allows to horizontally scale an application by forcing
-all the instances to run on a different server. For example this is actively
-used in our setup to launch a Elasticsearch database running on a three node
-cluster where we store build logs and information. The whole cluster
-configuration, including the actual location of spawn services on the cluster
-and their port mappings, are available via Marathon REST API and can therefore
-be used for service discovery and automated configuration. Finally, in order to
-improve the experience of deploying a new service Marathon it is possible to
-navigate deployment history and roll back to previous configurations. The
-flexibility of the system is demonstrated by the fact it's easy to actually
-deploy a new Mesos and Marathon cluster using Mesos and Marathon itself. This is
-in particular an interesting feature which could be used to provide very dynamic
-opportunistic usage of resources by launching and reshaping Mesos Clusters on
-top of a parent stable cluster and providing an entry-point to each cluster to
-different users.
+Mesos would not be to much different from a normal batch-system,
+however, if it did not provide the ability to execute long running
+services, either running natively inside a Docker container. In
+particular the Mesos framework Marathon provides a simple setup where
+services can be defined via a JSON formatted file, passed to the
+service via its REST API\@. The JSON file contains information like
+which executable to launch or alternatively which Docker container
+to spawn. Additional configuration options allow to define port and
+volume mappings for the application, and to specify how many copies
+are requested. Moreover Marathon allows the service manager to specify
+placement constraints so that, for example, a given instance of a web
+server is started on a machine where the data is actually located or
+it allows to horizontally scale an application by forcing all the
+instances to run on a different server. For example this is actively
+used in our setup to launch a Elasticsearch database running on a three
+node cluster where we store build logs and information. The whole
+cluster configuration, including the actual location of spawn services
+on the cluster and their port mappings, are available via Marathon
+REST API and can therefore be used for service discovery and automated
+configuration. Finally, in order to improve the experience of deploying
+a new service Marathon it is possible to navigate deployment history and
+roll back to previous configurations. The flexibility of the system is
+demonstrated by the fact it's easy to actually deploy a new Mesos and
+Marathon cluster using Mesos and Marathon itself. This is in particular
+an interesting feature which could be used to provide very dynamic
+opportunistic usage of resources by launching and reshaping Mesos
+Clusters on top of a parent stable cluster and providing an entry-point
+to each cluster to different users.
 
 \section{Advantages of the new setup}
 
@@ -304,14 +313,15 @@ three advantages:
 \end{itemize}
 
 Separation of concerns in particular improves reliability of the whole
-infrastructure during upgrades. By having dockerized applications running on the
-cluster we are not in the need of updating them as we update the infrastructure
-itself, following CERN/IT upgrades pace. Moreover, high-availability allows us
-to update one component at the time, without having to sacrifice service uptime.
-Finally the fact we can dynamically use part of a slave allows us to reshape our
-cluster to have virtual machines with more cores with the consequent higher
-performance in case of parallel workloads, without sacrificing resources in case
-of sequential ones.
+infrastructure during upgrades. By having \textit{dockerized}
+applications running on the cluster we are not in the need of updating
+them as we update the infrastructure itself, following CERN/IT upgrades
+pace. Moreover, high-availability allows us to update one component at
+the time, without having to sacrifice service uptime. Finally the fact
+we can dynamically use part of a slave allows us to reshape our cluster
+to have virtual machines with more cores with the consequent higher
+performance in case of parallel workloads, without sacrificing resources
+in case of sequential ones.
 
 \section{Conclusions and future work}
 
@@ -324,13 +334,13 @@ availability.
 Work continues in migrating our build infrastructure to Mesos, in particular
 to migrate larger jobs to it.
 
-Given the fact Mesos is specifically thought as a way to have multiple clients
-access the same cluster resources, future work can also be expected in the
-direction of sharing resources of the build infrastructure cluster with other
-parties within and outside CMS, establishing collaboration, for example, with
-the build and Release and QA team of other experiments. In order to do so an
-economic model of how the cluster resources are shared among competing parties
-would be required.
+Given the fact Mesos is specifically thought as a way to have multiple
+clients access the same cluster resources, future work can also
+be expected in the direction of sharing resources of the build
+infrastructure cluster with other parties within and outside CMS,
+establishing collaboration, for example, with the Release and QA teams
+of other experiments. In order to do so an economic model of how the
+cluster resources are shared among competing parties would be required.
 
 \section*{Acknowledgements}
 This work was partially supported by the National Science Foundation, under
